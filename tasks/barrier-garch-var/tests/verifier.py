@@ -403,7 +403,7 @@ def _check_edges(intermediates: dict, concept_sub: dict) -> dict:
         """Check if node is a descendant of ancestor in KM."""
         if visited is None:
             visited = set()
-        if node in visited:
+        if ancestor in visited:
             return False
         visited.add(ancestor)
         for child in children.get(ancestor, set()):
