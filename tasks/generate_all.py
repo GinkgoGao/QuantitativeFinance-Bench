@@ -1252,7 +1252,15 @@ def solve_sentiment(prices_data=None, dates=None, tickers=None,
     alpha_daily = float(intercept)
     beta = float(slope)
     r_squared = float(r_value ** 2)
-    alpha_tstat = alpha_daily / stderr if stderr > 0 else 0.0
+    result = stats.linregress(mkt_aligned, portfolio_returns)
+    slope, intercept, r_value, p_value, stderr = (
+        result.slope, result.intercept, result.rvalue,
+        result.pvalue, result.stderr,
+    )
+    alpha_daily = float(intercept)
+    beta = float(slope)
+    r_squared = float(r_value ** 2)
+    alpha_tstat = alpha_daily / result.intercept_stderr if result.intercept_stderr > 0 else 0.0
     alpha_ann = alpha_daily * 252  # simple multiplication (primary)
     alpha_ann_compound = (1 + alpha_daily) ** 252 - 1  # compound (alt)
 
