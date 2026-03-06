@@ -19,31 +19,20 @@ def load_json(path):
 
 def write_json(path, obj):
     """Write JSON, converting Python NaN/Infinity to JSON null."""
-    with open(path, "w") as f:
-        json.dump(sanitise(obj), f, indent=2)
+def write_json(path, obj):
+    """Write JSON, converting Python NaN/Infinity to JSON null."""
+    def sanitise(o):
         if isinstance(o, float) and (math.isnan(o) or math.isinf(o)):
             return None
-        raise TypeError(f"Object of type {type(o)} is not JSON serializable")
-        if isinstance(o, float):
-            if math.isnan(o) or math.isinf(o):
-                return None
-
-    # First pass: walk the object and replace nan/inf with None so
-    # json.dumps produces valid JSON (nan is not valid JSON).
-    def sanitise(obj):
-        if isinstance(obj, float) and (math.isnan(obj) or math.isinf(obj)):
-            return None
-        if isinstance(obj, dict):
-            return {k: sanitise(v) for k, v in obj.items()}
-        if isinstance(obj, list):
-            return [sanitise(v) for v in obj]
-        return obj
+        if isinstance(o, dict):
+            return {k: sanitise(v) for k, v in o.items()}
+        if isinstance(o, list):
+            return [sanitise(v) for v in o]
+        return o
 
     with open(path, "w") as f:
         json.dump(sanitise(obj), f, indent=2)
     print(f"  wrote {path}")
-
-# ── 1. results.json  (deliverables) ─────────────────────────────────
 expected_path = os.path.join(REF_DIR, "expected.json")
 expected = load_json(expected_path)
 
