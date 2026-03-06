@@ -252,10 +252,7 @@ def check_intermediates(
             agent_value = entry
             entry = {"value": entry}
         else:
-        else:
             continue  # skip entries that are neither dict nor numeric
-        else:
-            continue
         if term_name in checkpoints_ref:
             ref_cp = checkpoints_ref[term_name]
             matched_refs.add(term_name)
