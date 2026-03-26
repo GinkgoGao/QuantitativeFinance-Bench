@@ -18,6 +18,13 @@ on:
 
 jobs:
   test-deploy:
+    # Prevent concurrent runs for the same PR — duplicate webhook deliveries
+    # from a single comment can trigger multiple simultaneous runs, causing
+    # git lock conflicts on the deploy server.
+    concurrency:
+      group: test-deploy-pr-${{ github.event.issue.number || github.event.inputs.pr_number }}
+      cancel-in-progress: true
+
     # For issue_comment: only PR comments, /test-deploy, maintainers only
     # For workflow_dispatch: always run
     if: |

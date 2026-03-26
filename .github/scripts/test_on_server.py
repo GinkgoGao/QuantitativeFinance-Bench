@@ -12,6 +12,7 @@ Outputs structured JSON to /tmp/test_deploy_results.json.
 from __future__ import annotations
 
 import argparse
+import fcntl
 import json
 import os
 import subprocess
@@ -30,6 +31,7 @@ REQUIRED_FILES = [
 ]
 CANARY = "finance-bench-canary GUID"
 RESULTS_FILE = Path("/tmp/test_deploy_results.json")
+LOCK_FILE = Path("/tmp/test_deploy.lock")
 
 
 # ---------------------------------------------------------------------------
@@ -244,6 +246,15 @@ def main() -> None:
     parser.add_argument("head_ref", help="PR head branch name")
     parser.add_argument("base_ref", nargs="?", default="main")
     args = parser.parse_args()
+
+    # Acquire an exclusive lock so concurrent invocations (e.g. duplicate
+    # webhook deliveries triggering multiple workflow runs simultaneously)
+    # wait rather than racing on git operations and the results file.
+    lock_fh = LOCK_FILE.open("w")
+    try:
+        fcntl.flock(lock_fh, fcntl.LOCK_EX)
+    except OSError as e:
+        fail_and_exit("Could not acquire deploy lock.", details=str(e))
 
     os.chdir(args.repo_path)
 
