@@ -1,0 +1,15 @@
+{
+  "n_factors": 3,
+  "characteristic_names": [
+    "size",
+    "value",
+    "momentum",
+    "volatility",
+    "profitability"
+  ],
+  "als_max_iter": 200,
+  "als_tol": 1e-08,
+  "seed": 2026,
+  "grs_significance_level": 0.05,
+  "annualization_factor": 12
+}

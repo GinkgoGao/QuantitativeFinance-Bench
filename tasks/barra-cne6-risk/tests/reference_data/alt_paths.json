@@ -1,0 +1,204 @@
+{
+  "_comment": "Values filled by generator.",
+  "paths": [
+    {
+      "name": "primary",
+      "description": "wls_sqrt_mcap, nw_5_lags, ewma_42_halflife",
+      "primary": true,
+      "deliverables": [
+        {
+          "name": "total_risk_annual",
+          "value": 0.08576587655601173,
+          "path": "results.json:total_risk_annual",
+          "tolerance": {
+            "rtol": 0.05,
+            "atol": 0.005
+          }
+        },
+        {
+          "name": "factor_risk_annual",
+          "value": 0.07065396229993028,
+          "path": "results.json:factor_risk_annual",
+          "tolerance": {
+            "rtol": 0.05,
+            "atol": 0.005
+          }
+        },
+        {
+          "name": "specific_risk_annual",
+          "value": 0.04861895919022819,
+          "path": "results.json:specific_risk_annual",
+          "tolerance": {
+            "rtol": 0.05,
+            "atol": 0.005
+          }
+        },
+        {
+          "name": "factor_risk_pct",
+          "value": 0.6786470776538842,
+          "path": "results.json:factor_risk_pct",
+          "tolerance": {
+            "rtol": 0.05,
+            "atol": 0.02
+          }
+        },
+        {
+          "name": "specific_risk_pct",
+          "value": 0.32135292234611573,
+          "path": "results.json:specific_risk_pct",
+          "tolerance": {
+            "rtol": 0.05,
+            "atol": 0.02
+          }
+        },
+        {
+          "name": "style_risk_pct",
+          "value": 0.042051924337036826,
+          "path": "results.json:style_risk_pct",
+          "tolerance": {
+            "rtol": 0.1,
+            "atol": 0.02
+          }
+        },
+        {
+          "name": "industry_risk_pct",
+          "value": 0.6365951533168472,
+          "path": "results.json:industry_risk_pct",
+          "tolerance": {
+            "rtol": 0.1,
+            "atol": 0.02
+          }
+        }
+      ],
+      "checkpoints": {
+        "nan_count": {
+          "value": 15,
+          "concept": "stats.data_cleaning",
+          "domain": "STAT",
+          "tolerance": {
+            "atol": 0
+          },
+          "siblings": {}
+        },
+        "outliers_clipped": {
+          "value": 75,
+          "concept": "stats.winsorization",
+          "domain": "STAT",
+          "tolerance": {
+            "atol": 2
+          },
+          "siblings": {}
+        },
+        "mean_factor_return_beta": {
+          "value": -0.0003801409609277244,
+          "concept": "factor.beta_return",
+          "domain": "CQF",
+          "tolerance": {
+            "rtol": 0.1,
+            "atol": 0.005
+          },
+          "siblings": {}
+        },
+        "mean_factor_return_size": {
+          "value": 0.020424093271944083,
+          "concept": "factor.size_return",
+          "domain": "CQF",
+          "tolerance": {
+            "rtol": 0.1,
+            "atol": 0.005
+          },
+          "siblings": {}
+        },
+        "tstat_beta": {
+          "value": -0.010286490865065655,
+          "concept": "stats.t_statistic",
+          "domain": "STAT",
+          "tolerance": {
+            "rtol": 0.15,
+            "atol": 0.3
+          },
+          "siblings": {}
+        },
+        "tstat_momentum": {
+          "value": -1.578168345874351,
+          "concept": "stats.t_statistic",
+          "domain": "STAT",
+          "tolerance": {
+            "rtol": 0.15,
+            "atol": 0.3
+          },
+          "siblings": {}
+        },
+        "factor_cov_beta_beta": {
+          "value": 0.0014126434502711466,
+          "concept": "risk.factor_covariance",
+          "domain": "FRM",
+          "tolerance": {
+            "rtol": 0.05
+          },
+          "siblings": {}
+        },
+        "factor_cov_beta_size": {
+          "value": -0.00025151282964775215,
+          "concept": "risk.factor_covariance",
+          "domain": "FRM",
+          "tolerance": {
+            "rtol": 0.1,
+            "atol": 0.0005
+          },
+          "siblings": {}
+        },
+        "mean_specific_vol_annual": {
+          "value": 0.2581385291530514,
+          "concept": "risk.specific_risk",
+          "domain": "FRM",
+          "tolerance": {
+            "rtol": 0.05,
+            "atol": 0.005
+          },
+          "siblings": {}
+        },
+        "mean_abs_residual": {
+          "value": 0.013032421087387419,
+          "concept": "stats.residual_analysis",
+          "domain": "STAT",
+          "tolerance": {
+            "rtol": 0.05,
+            "atol": 0.001
+          },
+          "siblings": {}
+        },
+        "mean_residual_autocorr": {
+          "value": 0.006717976659398846,
+          "concept": "stats.autocorrelation",
+          "domain": "STAT",
+          "tolerance": {
+            "rtol": 0.15,
+            "atol": 0.02
+          },
+          "siblings": {}
+        },
+        "port_exposure_beta": {
+          "value": 0.12450368227280999,
+          "concept": "pm.factor_exposure",
+          "domain": "CFA",
+          "tolerance": {
+            "rtol": 0.1,
+            "atol": 0.05
+          },
+          "siblings": {}
+        },
+        "port_exposure_size": {
+          "value": -0.47600777859486826,
+          "concept": "pm.factor_exposure",
+          "domain": "CFA",
+          "tolerance": {
+            "rtol": 0.1,
+            "atol": 0.05
+          },
+          "siblings": {}
+        }
+      }
+    }
+  ]
+}
