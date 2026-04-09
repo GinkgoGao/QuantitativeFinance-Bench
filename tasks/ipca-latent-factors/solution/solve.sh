@@ -62,27 +62,10 @@ for k in range(K):
 prev_obj = np.inf
 converged = False
 for it in range(max_iter):
-    # Fix F, solve Gamma via stacked Kronecker regression
-    # vec(R) = (kron(I_K, Z) * vec(Gamma * F') after reshape... use closed form per-month then stack
-    # Simpler: minimize sum_t || R_t - Z_t Gamma f_t ||^2
-    # Stack: each obs is r_{it} ~ (z_{it} kron f_t) vec(Gamma)
-    # Build big LHS
-    A = np.zeros((K * L, K * L))
-    b = np.zeros(K * L)
-    for t in range(T_eff):
-        Z_t = Z[t]  # (N, L)
-        f_t = F[t]  # (K,)
-        # design row for stock i: outer(z_i, f_t).flatten() in row-major (K*L,)
-        kron_X = np.einsum("il,k->ikl", Z_t, f_t).reshape(N, K*L)
-        A += kron_X.T @ kron_X
-        b += kron_X.T @ R[t]
-    A += ridge * np.eye(K * L)
-    gamma_vec = np.linalg.solve(A, b)
-    Gamma = gamma_vec.reshape(L, K, order='F')
-
-    # Wait — let me think. We have outer(z_i (L,), f (K,)) -> (L, K), flatten to (LK,)
-    # If we use einsum "il,k->ilk" then reshape (N, L*K), the order is l-major then k.
-    # gamma_vec.reshape(L, K) corresponds to that. Let me redo.
+    # Fix F, solve Gamma by stacking per-month normal equations.
+    # For each stock i at month t, the design row is
+    #   outer(z_{i,t}, f_t).reshape(L*K,)
+    # which matches gamma_vec.reshape(L, K) indexing.
     A = np.zeros((K * L, K * L))
     b = np.zeros(K * L)
     for t in range(T_eff):
@@ -128,7 +111,9 @@ F = F @ eigvecs
 Gamma = Gamma @ eigvecs
 
 # ── Step 5: Compute R² ──
-total_ss = np.sum(R**2)
+# Use centered total sum of squares so total_r_squared is comparable to
+# the per-month centered cross-sectional R² reported in cs_r2_per_month.
+total_ss = np.sum((R - R.mean())**2)
 resid_ss = 0.0
 cs_r2_per_month = []
 for t in range(T_eff):
@@ -161,8 +146,10 @@ for i in range(N):
     betas[i] = coef[1:]
     eps[:, i] = R[:, i] - X @ coef
 
-# Sigma_hat: MLE convention divides by T (not T-K-1)
-Sigma_hat = (eps.T @ eps) / T_eff
+# Use the unbiased residual covariance estimator as in the original
+# Gibbons-Ross-Shanken (1989) derivation: divide by T - K - 1, where
+# (K + 1) is the number of regressors (one intercept + K factors).
+Sigma_hat = (eps.T @ eps) / (T_eff - K - 1)
 mu_F = F.mean(axis=0)
 Omega_hat = np.cov(F.T, ddof=1)
 
@@ -191,6 +178,18 @@ else:
 mean_alpha = float(np.mean(alphas))
 mean_abs_alpha = float(np.mean(np.abs(alphas)))
 
+# ── Extra diagnostics (required by checkpoints.json) ──
+factor_var_ratio_3 = float(eigvals[2] / eigvals.sum()) if eigvals.sum() > 0 and K >= 3 else 0.0
+factor_corr_13 = float(np.corrcoef(F[:, 0], F[:, 2])[0, 1]) if K >= 3 else 0.0
+factor_corr_23 = float(np.corrcoef(F[:, 1], F[:, 2])[0, 1]) if K >= 3 else 0.0
+max_factor_return_abs = float(np.max(np.abs(F)))
+std_factor1 = float(np.std(F[:, 0], ddof=1))
+std_factor2 = float(np.std(F[:, 1], ddof=1)) if K >= 2 else 0.0
+std_factor3 = float(np.std(F[:, 2], ddof=1)) if K >= 3 else 0.0
+gamma_abs_mean = float(np.mean(np.abs(Gamma)))
+mean_return_matrix = float(np.mean(R))
+max_abs_alpha = float(np.max(np.abs(alphas)))
+
 # ── Write outputs ──
 results = {
     "total_r_squared": float(total_r_squared),
@@ -213,6 +212,16 @@ solution = {"intermediates": {
     "mean_alpha": {"value": mean_alpha},
     "mean_abs_alpha": {"value": mean_abs_alpha},
     "total_r_squared": {"value": float(total_r_squared)},
+    "factor_var_ratio_3": {"value": factor_var_ratio_3},
+    "factor_corr_13": {"value": factor_corr_13},
+    "factor_corr_23": {"value": factor_corr_23},
+    "max_factor_return_abs": {"value": max_factor_return_abs},
+    "std_factor1": {"value": std_factor1},
+    "std_factor2": {"value": std_factor2},
+    "std_factor3": {"value": std_factor3},
+    "gamma_abs_mean": {"value": gamma_abs_mean},
+    "mean_return_matrix": {"value": mean_return_matrix},
+    "max_abs_alpha": {"value": max_abs_alpha},
 }}
 
 with open("/app/output/results.json","w") as f: json.dump(results, f, indent=2)

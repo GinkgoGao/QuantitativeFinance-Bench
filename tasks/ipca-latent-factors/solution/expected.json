@@ -39,7 +39,7 @@
     },
     {
       "name": "grs_p_value",
-      "value": 0.0912598335112863,
+      "value": 0.11438096600210146,
       "path": "results.json:grs_p_value",
       "tolerance": {
         "rtol": 0.3,
