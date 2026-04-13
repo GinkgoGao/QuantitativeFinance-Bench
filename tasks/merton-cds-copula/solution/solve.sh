@@ -87,10 +87,10 @@ sigma_V_arr = np.zeros(N)
 default_probs = np.zeros(N)
 distance_to_default = np.zeros(N)
 
-T_merton = balance[firms[0]]["maturity"]
 
 for i, f in enumerate(firms):
     D = balance[f]["debt"]
+    T_merton = balance[f]["maturity"]
     V, sV = solve_merton(E_now[i], sigma_E[i], D, r, T_merton)
     V_arr[i] = V
     sigma_V_arr[i] = sV
@@ -148,7 +148,7 @@ portfolio_el = float(np.mean(losses))
 losses_sorted = np.sort(losses)
 var_idx = int(np.ceil(conf * n_sims)) - 1
 portfolio_var = float(losses_sorted[var_idx])
-portfolio_es = float(np.mean(losses_sorted[var_idx:]))
+portfolio_es = float(np.mean(losses_sorted[var_idx + 1:]))
 
 results = {
     "avg_default_probability": avg_default_prob,
