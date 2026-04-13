@@ -545,8 +545,8 @@ def write_outputs(
     cp_correct = checks.get("correct", 0)
     cp_frac = cp_correct / cp_total
 
-    reward = 0.5 * cc_frac + 0.5 * cp_frac
-    (log_dir / "reward.txt").write_text(str(round(reward, 6)))
+    reward = 1 if (cc_pass == cc_total and cp_correct == cp_total) else 0
+    (log_dir / "reward.txt").write_text(str(reward))
 
     # diagnostic.json — full diagnostic report
     diagnostic = {
