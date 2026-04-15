@@ -73,9 +73,16 @@ portfolio defined in `params.json`. At a high level:
 ```
 
 All `*_annual` values are annualized volatilities. All `*_pct` values
-are fractions of total **variance** (not volatility); the
-style/industry split refers to contributions to the factor variance
-component.
+are fractions of **total portfolio variance** (not volatility), all
+measured against the same denominator. By construction:
+
+- `factor_risk_pct + specific_risk_pct = 1`
+- `style_risk_pct + industry_risk_pct = factor_risk_pct`
+
+In other words, `style_risk_pct` is the style-factor share of total
+variance (not of factor variance), and likewise for
+`industry_risk_pct`. This convention lets every `*_pct` be read
+against the same denominator.
 
 ### `/app/output/solution.json`
 
