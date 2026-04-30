@@ -54,12 +54,21 @@ estimated jointly for `Γ` and `F`.
 4. After convergence, normalize the factors using an eigendecomposition
    of `F'F/T` so that the rotated factors are uncorrelated and ordered
    by variance contribution. Apply the same rotation to `Γ`.
+
+   **Sign convention**: Eigendecompositions leave the sign of each
+   eigenvector undetermined, so two correct implementations can
+   produce factors with opposite signs and Sharpe ratios with flipped
+   signs. To make results reproducible, after the rotation flip the
+   sign of each factor (and the corresponding column of `Γ`) whenever
+   the factor's time-series mean is negative. After this step, every
+   factor in `F` should satisfy `mean(F[:, k]) ≥ 0`.
 5. Compute the model's total R² (uncentered) and the average
    cross-sectional R² across months.
 6. Compute the annualized Sharpe ratio of each (rotated) latent factor.
 7. Run the Gibbons-Ross-Shanken joint test on the residual time-series
    alphas to assess whether the model leaves significant unexplained
    premia.
+
 
 ## Output
 

@@ -110,6 +110,16 @@ eigvecs = eigvecs[:, order]
 F = F @ eigvecs
 Gamma = Gamma @ eigvecs
 
+# Sign convention: eigendecomposition leaves factor signs undetermined,
+# so flip the sign of each factor (and the corresponding column of Gamma)
+# whenever the factor's time-series mean is negative. This guarantees
+# every reported factor has a non-negative mean and produces deterministic
+# Sharpe ratios across implementations.
+for k in range(K):
+    if F[:, k].mean() < 0:
+        F[:, k] = -F[:, k]
+        Gamma[:, k] = -Gamma[:, k]
+
 # ── Step 5: Compute R² ──
 # Use uncentered total sum of squares per the published task spec.
 # Note: total_r_squared and mean_cs_r_squared use different conventions
